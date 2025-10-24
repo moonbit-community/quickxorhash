@@ -50,7 +50,8 @@ pub fn QuickXorHash::update_from_bytes(
   let mut i = 0
   let mut pos_in_block = (self.size % BLOCK_SIZE.to_uint64()).to_int()
   while pos_in_block != 0 && i < data.length() {
-    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^
+      (data[i] & 0xFFU.to_byte())
     pos_in_block = (pos_in_block + 1) % BLOCK_SIZE
     self.size = self.size + 1UL
     i = i + 1
@@ -69,13 +70,15 @@ pub fn QuickXorHash::update_from_bytes(
   }
   pos_in_block = 0
   while i < data.length() {
-    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^
+      (data[i] & 0xFFU.to_byte())
     pos_in_block = pos_in_block + 1
     self.size = self.size + 1UL
     i = i + 1
   }
 }
 
+///|
 /// Update the hash state using a `BytesView` slice.
 ///
 /// Semantically identical to `update_from_bytes`, but accepts `BytesView` (a view into
@@ -91,7 +94,8 @@ pub fn QuickXorHash::update_from_bytes_view(
   let mut i = 0
   let mut pos_in_block = (self.size % BLOCK_SIZE.to_uint64()).to_int()
   while pos_in_block != 0 && i < data.length() {
-    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^
+      (data[i] & 0xFFU.to_byte())
     pos_in_block = (pos_in_block + 1) % BLOCK_SIZE
     self.size = self.size + 1UL
     i = i + 1
@@ -110,13 +114,15 @@ pub fn QuickXorHash::update_from_bytes_view(
   }
   pos_in_block = 0
   while i < data.length() {
-    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^
+      (data[i] & 0xFFU.to_byte())
     pos_in_block = pos_in_block + 1
     self.size = self.size + 1UL
     i = i + 1
   }
 }
 
+///|
 /// Update the hash state using an `Array[Byte]` input.
 ///
 /// Functionally the same as `update_from_bytes` but accepts a plain byte array. Useful
@@ -131,7 +137,8 @@ pub fn QuickXorHash::update_from_byte_array(
   let mut i = 0
   let mut pos_in_block = (self.size % BLOCK_SIZE.to_uint64()).to_int()
   while pos_in_block != 0 && i < data.length() {
-    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^
+      (data[i] & 0xFFU.to_byte())
     pos_in_block = (pos_in_block + 1) % BLOCK_SIZE
     self.size = self.size + 1UL
     i = i + 1
@@ -150,7 +157,8 @@ pub fn QuickXorHash::update_from_byte_array(
   }
   pos_in_block = 0
   while i < data.length() {
-    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^
+      (data[i] & 0xFFU.to_byte())
     pos_in_block = pos_in_block + 1
     self.size = self.size + 1UL
     i = i + 1
@@ -176,7 +184,8 @@ pub fn QuickXorHash::finalize_to_byte_array(self : QuickXorHash) -> Array[Byte] 
     let shift_low : Int = shift_bits & 7
     let v : Int = self.buffer[i].to_int() << shift_low
     hash21[shift_bytes] = hash21[shift_bytes] ^ (v & 0xFF).to_byte()
-    hash21[shift_bytes + 1] = hash21[shift_bytes + 1] ^ ((v >> 8) & 0xFF).to_byte()
+    hash21[shift_bytes + 1] = hash21[shift_bytes + 1] ^
+      ((v >> 8) & 0xFF).to_byte()
     i = i + 1
   }
   hash21[0] = hash21[0] ^ hash21[20]
@@ -196,18 +205,20 @@ pub fn QuickXorHash::finalize_to_byte_array(self : QuickXorHash) -> Array[Byte] 
   result
 }
 
+///|
 /// Convert the finalized 20-byte hash to a `Bytes` object.
 ///
 /// This calls `finalize_to_byte_array()` and returns the result as an owned `Bytes` object.
-pub fn finalize_to_bytes(self : QuickXorHash) ->Bytes{
+pub fn finalize_to_bytes(self : QuickXorHash) -> Bytes {
   let buf = @buffer.from_array(self.finalize_to_byte_array())
   buf.to_bytes()
 }
 
+///|
 /// Finalize the hash and return the Base64 (standard) encoding as a string.
 ///
 /// Steps: finalize -> convert to `Bytes` -> encode using standard base64.
-pub fn finalize_to_base64(self : QuickXorHash) ->String{
+pub fn finalize_to_base64(self : QuickXorHash) -> String {
   let bytes = self.finalize_to_bytes()
   @base64.std_encode2str(bytes.to_fixedarray())
 }
