@@ -51,6 +51,78 @@ pub fn QuickXorHash::update(
   }
 }
 
+pub fn QuickXorHash::update_from_bytes_view(
+  self : QuickXorHash,
+  data : BytesView,
+) -> Unit {
+  if data.length() == 0 {
+    return
+  }
+  let mut i = 0
+  let mut pos_in_block = (self.size % BLOCK_SIZE.to_uint64()).to_int()
+  while pos_in_block != 0 && i < data.length() {
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    pos_in_block = (pos_in_block + 1) % BLOCK_SIZE
+    self.size = self.size + 1UL
+    i = i + 1
+  }
+  if i == data.length() {
+    return
+  }
+  while data.length() - i >= BLOCK_SIZE {
+    let mut j = 0
+    while j < BLOCK_SIZE {
+      self.buffer[j] = self.buffer[j] ^ (data[i + j] & 0xFFU.to_byte())
+      j = j + 1
+    }
+    i = i + BLOCK_SIZE
+    self.size = self.size + BLOCK_SIZE.to_uint64()
+  }
+  pos_in_block = 0
+  while i < data.length() {
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    pos_in_block = pos_in_block + 1
+    self.size = self.size + 1UL
+    i = i + 1
+  }
+}
+
+pub fn QuickXorHash::update_from_byte_array(
+  self : QuickXorHash,
+  data : Array[Byte],
+) -> Unit {
+  if data.length() == 0 {
+    return
+  }
+  let mut i = 0
+  let mut pos_in_block = (self.size % BLOCK_SIZE.to_uint64()).to_int()
+  while pos_in_block != 0 && i < data.length() {
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    pos_in_block = (pos_in_block + 1) % BLOCK_SIZE
+    self.size = self.size + 1UL
+    i = i + 1
+  }
+  if i == data.length() {
+    return
+  }
+  while data.length() - i >= BLOCK_SIZE {
+    let mut j = 0
+    while j < BLOCK_SIZE {
+      self.buffer[j] = self.buffer[j] ^ (data[i + j] & 0xFFU.to_byte())
+      j = j + 1
+    }
+    i = i + BLOCK_SIZE
+    self.size = self.size + BLOCK_SIZE.to_uint64()
+  }
+  pos_in_block = 0
+  while i < data.length() {
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU.to_byte())
+    pos_in_block = pos_in_block + 1
+    self.size = self.size + 1UL
+    i = i + 1
+  }
+}
+
 ///|
 pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
   let hash21 = Array::make(21, 0U.to_byte())
