@@ -1,20 +1,45 @@
 ///|
-/// Block size for QuickXorHash
+/// Block size for QuickXorHash.
+/// This constant defines the internal block size (in bytes) used by the
+/// QuickXorHash algorithm. It equals 20 * 11 * 8 and is used when folding
+/// input data into the 160-bit internal buffer.
 pub const BLOCK_SIZE : Int = 20 * 11 * 8
 
 ///|
+/// In-memory state for a QuickXorHash computation.
+///
+/// Fields:
+/// - buffer: internal state buffer (length = BLOCK_SIZE) where bytes are XORed
+///   as data is fed into the hash.
+/// - size: total number of bytes that have been fed into this hash instance.
 pub struct QuickXorHash {
   buffer : Array[Byte]
   mut size : UInt64
 }
 
 ///|
+/// Create a new QuickXorHash instance.
+///
+/// Returns a `QuickXorHash` with its internal buffer zero-initialized and
+/// `size` set to 0. Use `update` (or the typed variants) to feed data.
 pub fn new() -> QuickXorHash {
   let buf = Array::make(BLOCK_SIZE, 0U.to_byte())
   QuickXorHash::{ buffer: buf, size: 0UL }
 }
 
 ///|
+/// Update the hash state with the provided `Bytes` data.
+///
+/// This function XORs incoming bytes into the internal `buffer` in a rolling
+/// fashion using `BLOCK_SIZE`-sized blocks. It updates the internal `size`
+/// counter to reflect the total number of bytes processed. The function does
+/// nothing when `data` is empty.
+///
+/// Parameters:
+/// - `self`: the QuickXorHash instance to update (mutated in-place).
+/// - `data`: input bytes to feed into the hash.
+///
+/// Returns: Unit. Side effect: `self.buffer` and `self.size` are updated.
 pub fn QuickXorHash::update(
   self : QuickXorHash,
   data : Bytes,
@@ -51,6 +76,11 @@ pub fn QuickXorHash::update(
   }
 }
 
+/// Update the hash state using a `BytesView` slice.
+///
+/// Semantically identical to `update`, but accepts `BytesView` (a view into
+/// existing bytes) rather than an owned `Bytes`. The internal buffer and size
+/// are updated in the same way.
 pub fn QuickXorHash::update_from_bytes_view(
   self : QuickXorHash,
   data : BytesView,
@@ -87,6 +117,10 @@ pub fn QuickXorHash::update_from_bytes_view(
   }
 }
 
+/// Update the hash state using an `Array[Byte]` input.
+///
+/// Functionally the same as `update` but accepts a plain byte array. Useful
+/// when caller already has data in `Array[Byte]` form.
 pub fn QuickXorHash::update_from_byte_array(
   self : QuickXorHash,
   data : Array[Byte],
@@ -124,6 +158,15 @@ pub fn QuickXorHash::update_from_byte_array(
 }
 
 ///|
+/// Finalize the QuickXorHash and return the 20-byte hash value.
+///
+/// This computes the QuickXorHash output from the internal `buffer` and
+/// `size`. The algorithm shifts and XORs buffer bytes into a 21-byte
+/// temporary array, folds the 21st byte into the first, then produces a
+/// 20-byte result. The final 8 bytes (positions 12..19) are XORed with the
+/// little-endian encoding of `size`.
+///
+/// Returns: Array[Byte] of length 20 containing the finalized hash.
 pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
   let hash21 = Array::make(21, 0U.to_byte())
   let mut i = 0
@@ -153,11 +196,17 @@ pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
   result
 }
 
+/// Convert the finalized 20-byte hash to a `Bytes` object.
+///
+/// This calls `finalize()` and returns the result as an owned `Bytes` object.
 pub fn finalize_to_bytes(self : QuickXorHash) ->Bytes{
   let buf = @buffer.from_array(self.finalize())
   buf.to_bytes()
 }
 
+/// Finalize the hash and return the Base64 (standard) encoding as a string.
+///
+/// Steps: finalize -> convert to `Bytes` -> encode using standard base64.
 pub fn finalize_to_base64(self : QuickXorHash) ->String{
   let bytes = self.finalize_to_bytes()
   @base64.std_encode2str(bytes.to_fixedarray())
