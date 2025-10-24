@@ -40,7 +40,7 @@ pub fn new() -> QuickXorHash {
 /// - `data`: input bytes to feed into the hash.
 ///
 /// Returns: Unit. Side effect: `self.buffer` and `self.size` are updated.
-pub fn QuickXorHash::update(
+pub fn QuickXorHash::update_from_bytes(
   self : QuickXorHash,
   data : Bytes,
 ) -> Unit {
@@ -78,7 +78,7 @@ pub fn QuickXorHash::update(
 
 /// Update the hash state using a `BytesView` slice.
 ///
-/// Semantically identical to `update`, but accepts `BytesView` (a view into
+/// Semantically identical to `update_from_bytes`, but accepts `BytesView` (a view into
 /// existing bytes) rather than an owned `Bytes`. The internal buffer and size
 /// are updated in the same way.
 pub fn QuickXorHash::update_from_bytes_view(
@@ -119,7 +119,7 @@ pub fn QuickXorHash::update_from_bytes_view(
 
 /// Update the hash state using an `Array[Byte]` input.
 ///
-/// Functionally the same as `update` but accepts a plain byte array. Useful
+/// Functionally the same as `update_from_bytes` but accepts a plain byte array. Useful
 /// when caller already has data in `Array[Byte]` form.
 pub fn QuickXorHash::update_from_byte_array(
   self : QuickXorHash,
@@ -167,7 +167,7 @@ pub fn QuickXorHash::update_from_byte_array(
 /// little-endian encoding of `size`.
 ///
 /// Returns: Array[Byte] of length 20 containing the finalized hash.
-pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
+pub fn QuickXorHash::finalize_to_byte_array(self : QuickXorHash) -> Array[Byte] {
   let hash21 = Array::make(21, 0U.to_byte())
   let mut i = 0
   while i < BLOCK_SIZE {
@@ -198,9 +198,9 @@ pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
 
 /// Convert the finalized 20-byte hash to a `Bytes` object.
 ///
-/// This calls `finalize()` and returns the result as an owned `Bytes` object.
+/// This calls `finalize_to_byte_array()` and returns the result as an owned `Bytes` object.
 pub fn finalize_to_bytes(self : QuickXorHash) ->Bytes{
-  let buf = @buffer.from_array(self.finalize())
+  let buf = @buffer.from_array(self.finalize_to_byte_array())
   buf.to_bytes()
 }
 

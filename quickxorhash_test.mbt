@@ -1,7 +1,7 @@
 ///|
 test "empty_string" {
   let hash = @quickxorhash.new()
-  hash.update(b"")
+  hash.update_from_bytes(b"")
   let res = hash.finalize_to_base64()
   inspect(res, content="AAAAAAAAAAAAAAAAAAAAAAAAAAA=")
 }
@@ -9,7 +9,7 @@ test "empty_string" {
 ///|
 test "short_data" {
   let hash = @quickxorhash.new()
-  hash.update(@base64.std_decode2bytes("Sg=="))
+  hash.update_from_bytes(@base64.std_decode2bytes("Sg=="))
   let res = hash.finalize_to_base64()
   inspect(res, content="SgAAAAAAAAAAAAAAAQAAAAAAAAA=")
 }
@@ -196,10 +196,10 @@ test "long_data" {
   for c in cases {
     let h = @quickxorhash.new()
     if c.1 == "" {
-      h.update(b"")
+      h.update_from_bytes(b"")
     } else {
       let bytes = @base64.std_decode2bytes(c.1)
-      h.update(bytes)
+      h.update_from_bytes(bytes)
     }
     let got = h.finalize_to_base64()
     inspect(got, content=c.2)
@@ -212,12 +212,12 @@ test "split into 2 updates" {
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(x => x.to_byte()),
   )
   let hash1 = new()
-  hash1.update(data)
-  let result1 = hash1.finalize()
+  hash1.update_from_bytes(data)
+  let result1 = hash1.finalize_to_byte_array()
   let hash2 = new()
   hash2.update_from_bytes_view(data[:5])
   hash2.update_from_bytes_view(data[5:])
-  let result2 = hash2.finalize()
+  let result2 = hash2.finalize_to_byte_array()
   assert_eq(result1, result2)
 }
 
@@ -225,15 +225,15 @@ test "split into 2 updates" {
 test "update byte by byte" {
   let data = Bytes::from_array([1, 2, 3, 4, 5].map(x => x.to_byte()))
   let hash1 = new()
-  hash1.update(data)
-  let result1 = hash1.finalize()
+  hash1.update_from_bytes(data)
+  let result1 = hash1.finalize_to_byte_array()
   let hash2 = new()
   let mut i = 0
   while i < data.length() {
     hash2.update_from_bytes_view(data[i:i + 1])
     i = i + 1
   }
-  let result2 = hash2.finalize()
+  let result2 = hash2.finalize_to_byte_array()
   assert_eq(result1, result2)
 }
 
@@ -244,13 +244,13 @@ test "split across block boundary" {
   let data = Array::make(total_size, 0xABU.to_byte())
   let data_bytes = Bytes::from_array(data)
   let hash1 = new()
-  hash1.update(data_bytes)
-  let result1 = hash1.finalize()
+  hash1.update_from_bytes(data_bytes)
+  let result1 = hash1.finalize_to_byte_array()
   let hash2 = new()
   hash2.update_from_bytes_view(data_bytes[:block_size - 50])
   hash2.update_from_bytes_view(data_bytes[block_size - 50:block_size + 50])
   hash2.update_from_bytes_view(data_bytes[block_size + 50:block_size + 100])
-  let result2 = hash2.finalize()
+  let result2 = hash2.finalize_to_byte_array()
   assert_eq(result1, result2)
 }
 
@@ -258,12 +258,12 @@ test "split across block boundary" {
 test "empty updates" {
   let data = Bytes::from_array([1, 2, 3, 4, 5].map(x => x.to_byte()))
   let hash1 = new()
-  hash1.update(data)
-  let result1 = hash1.finalize()
+  hash1.update_from_bytes(data)
+  let result1 = hash1.finalize_to_byte_array()
   let hash2 = new()
   hash2.update_from_bytes_view(data[0:2])
-  hash2.update(Bytes::from_array([]))
+  hash2.update_from_bytes(Bytes::from_array([]))
   hash2.update_from_bytes_view(data[2:])
-  let result2 = hash2.finalize()
+  let result2 = hash2.finalize_to_byte_array()
   assert_eq(result1, result2)
 }

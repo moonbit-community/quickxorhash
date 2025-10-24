@@ -3,7 +3,7 @@ fn main()->Unit{
   let buf =  @buffer.new()
   buf.write_bytes(b"")
   let test_data = buf.to_bytes()
-  hash.update(test_data)
+  hash.update_from_bytes(test_data)
   let res = hash.finalize_to_base64()
   println(res)
 }
