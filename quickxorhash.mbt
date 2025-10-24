@@ -9,7 +9,7 @@ pub struct QuickXorHash {
 }
 
 ///|
-pub fn new_quick_xor_hash() -> QuickXorHash {
+pub fn new() -> QuickXorHash {
   let buf = Array::make(BLOCK_SIZE, 0U.to_byte())
   QuickXorHash::{ buffer: buf, size: 0UL }
 }
@@ -17,7 +17,7 @@ pub fn new_quick_xor_hash() -> QuickXorHash {
 ///|
 pub fn QuickXorHash::update(
   self : QuickXorHash,
-  data : ArrayView[Byte],
+  data : Bytes,
 ) -> Unit {
   if data.length() == 0 {
     return
@@ -79,4 +79,14 @@ pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
     b = b + 1
   }
   result
+}
+
+pub fn finalize_to_bytes(self : QuickXorHash) ->Bytes{
+  let buf = @buffer.from_array(self.finalize())
+  buf.to_bytes()
+}
+
+pub fn finalize_to_base64(self : QuickXorHash) ->String{
+  let bytes = self.finalize_to_bytes()
+  @base64.std_encode2str(bytes.to_fixedarray())
 }

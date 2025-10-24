@@ -1,7 +1,9 @@
 fn main()->Unit{
-  let hash = @lib.new_quick_xor_hash()
-  let test_data = Array::make(10,0U.to_byte())
+  let hash = @lib.new()
+  let buf =  @buffer.new()
+  buf.write_bytes(b"")
+  let test_data = buf.to_bytes()
   hash.update(test_data)
-  let res = hash.finalize()
+  let res = hash.finalize_to_base64()
   println(res)
 }
