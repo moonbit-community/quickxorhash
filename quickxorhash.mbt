@@ -1,0 +1,82 @@
+///|
+/// Block size for QuickXorHash
+pub const BLOCK_SIZE : Int = 20 * 11 * 8
+
+///|
+pub struct QuickXorHash {
+  buffer : Array[UInt]
+  mut size : UInt64
+}
+
+///|
+pub fn new_quick_xor_hash() -> QuickXorHash {
+  let buf = Array::make(BLOCK_SIZE, 0U)
+  QuickXorHash::{ buffer: buf, size: 0UL }
+}
+
+///|
+pub fn QuickXorHash::update(
+  self : QuickXorHash,
+  data : ArrayView[UInt],
+) -> Unit {
+  if data.length() == 0 {
+    return
+  }
+  let mut i = 0
+  let mut pos_in_block = (self.size % BLOCK_SIZE.to_uint64()).to_int()
+  while pos_in_block != 0 && i < data.length() {
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU)
+    pos_in_block = (pos_in_block + 1) % BLOCK_SIZE
+    self.size = self.size + 1UL
+    i = i + 1
+  }
+  if i == data.length() {
+    return
+  }
+  while data.length() - i >= BLOCK_SIZE {
+    let mut j = 0
+    while j < BLOCK_SIZE {
+      self.buffer[j] = self.buffer[j] ^ (data[i + j] & 0xFFU)
+      j = j + 1
+    }
+    i = i + BLOCK_SIZE
+    self.size = self.size + BLOCK_SIZE.to_uint64()
+  }
+  pos_in_block = 0
+  while i < data.length() {
+    self.buffer[pos_in_block] = self.buffer[pos_in_block] ^ (data[i] & 0xFFU)
+    pos_in_block = pos_in_block + 1
+    self.size = self.size + 1UL
+    i = i + 1
+  }
+}
+
+///|
+pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[UInt] {
+  let hash21 = Array::make(21, 0U)
+  let mut i = 0
+  while i < BLOCK_SIZE {
+    let shift_bits : Int = i * 11 % 160
+    let shift_bytes : Int = shift_bits >> 3
+    let shift_low : Int = shift_bits & 7
+    let v : UInt = (self.buffer[i] << shift_low) & 0xFFFFU
+    hash21[shift_bytes] = hash21[shift_bytes] ^ (v & 0xFFU)
+    hash21[shift_bytes + 1] = hash21[shift_bytes + 1] ^ ((v >> 8) & 0xFFU)
+    i = i + 1
+  }
+  hash21[0] = hash21[0] ^ hash21[20]
+  let result = Array::make(20, 0U)
+  let mut t = 0
+  while t < 20 {
+    result[t] = hash21[t]
+    t = t + 1
+  }
+  let mut s : UInt64 = self.size
+  let mut b = 0
+  while b < 8 {
+    result[12 + b] = result[12 + b] ^ s.land(0xFFUL).to_uint()
+    s = s >> 8
+    b = b + 1
+  }
+  result
+}

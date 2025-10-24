@@ -1,0 +1,9 @@
+{
+  "is-main": true,
+  "import": [
+    {
+      "path": "baka-gourd/quickxorhash",
+      "alias": "lib"
+    }
+  ]
+}
