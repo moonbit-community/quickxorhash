@@ -59,9 +59,9 @@ pub fn QuickXorHash::finalize(self : QuickXorHash) -> Array[Byte] {
     let shift_bits : Int = i * 11 % 160
     let shift_bytes : Int = shift_bits >> 3
     let shift_low : Int = shift_bits & 7
-    let v : Byte = (self.buffer[i] << shift_low) & 0xFFFFU.to_byte()
-    hash21[shift_bytes] = hash21[shift_bytes] ^ (v & 0xFFU.to_byte())
-    hash21[shift_bytes + 1] = hash21[shift_bytes + 1] ^ ((v >> 8) & 0xFFU.to_byte())
+    let v : Int = self.buffer[i].to_int() << shift_low
+    hash21[shift_bytes] = hash21[shift_bytes] ^ (v & 0xFF).to_byte()
+    hash21[shift_bytes + 1] = hash21[shift_bytes + 1] ^ ((v >> 8) & 0xFF).to_byte()
     i = i + 1
   }
   hash21[0] = hash21[0] ^ hash21[20]
