@@ -253,3 +253,17 @@ test "split across block boundary" {
   let result2 = hash2.finalize()
   assert_eq(result1, result2)
 }
+
+///|
+test "empty updates" {
+  let data = Bytes::from_array([1, 2, 3, 4, 5].map(x => x.to_byte()))
+  let hash1 = new()
+  hash1.update(data)
+  let result1 = hash1.finalize()
+  let hash2 = new()
+  hash2.update_from_bytes_view(data[0:2])
+  hash2.update(Bytes::from_array([]))
+  hash2.update_from_bytes_view(data[2:])
+  let result2 = hash2.finalize()
+  assert_eq(result1, result2)
+}
