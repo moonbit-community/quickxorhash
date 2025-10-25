@@ -5,8 +5,8 @@
     "gmlewis/base64": "0.15.1"
   },
   "readme": "README.mbt.md",
-  "repository": "",
-  "license": "Apache-2.0",
-  "keywords": [],
-  "description": ""
+  "repository": "https://github.com/moonbit-community/quickxorhash",
+  "license": "MPL-2.0",
+  "keywords": ["hash","microsoft","onedrive"],
+  "description": "QuickXorHash on moonbit"
 }

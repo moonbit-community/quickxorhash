@@ -38,7 +38,7 @@ The primary type is `QuickXorHash` with the following useful functions:
 
 Example
 
-```moonbit
+```text
 let h = @quickxorhash.new()
 h.update_from_bytes(@buffer.from_str("hello").to_bytes())
 let raw = h.finalize_to_byte_array()
