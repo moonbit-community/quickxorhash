@@ -209,7 +209,7 @@ pub fn QuickXorHash::finalize_to_byte_array(self : QuickXorHash) -> Array[Byte] 
 /// Convert the finalized 20-byte hash to a `Bytes` object.
 ///
 /// This calls `finalize_to_byte_array()` and returns the result as an owned `Bytes` object.
-pub fn finalize_to_bytes(self : QuickXorHash) -> Bytes {
+pub fn QuickXorHash::finalize_to_bytes(self : QuickXorHash) -> Bytes {
   let buf = @buffer.from_array(self.finalize_to_byte_array())
   buf.to_bytes()
 }
@@ -218,7 +218,7 @@ pub fn finalize_to_bytes(self : QuickXorHash) -> Bytes {
 /// Finalize the hash and return the Base64 (standard) encoding as a string.
 ///
 /// Steps: finalize -> convert to `Bytes` -> encode using standard base64.
-pub fn finalize_to_base64(self : QuickXorHash) -> String {
+pub fn QuickXorHash::finalize_to_base64(self : QuickXorHash) -> String {
   let bytes = self.finalize_to_bytes()
   @base64.std_encode2str(bytes.to_fixedarray())
 }
