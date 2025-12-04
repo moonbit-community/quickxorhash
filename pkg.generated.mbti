@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "baka-gourd/quickxorhash"
+
+// Values
+pub const BLOCK_SIZE : Int = 1760
+
+pub fn new() -> QuickXorHash
+
+// Errors
+
+// Types and methods
+pub struct QuickXorHash {
+  buffer : Array[Byte]
+  mut size : UInt64
+}
+pub fn QuickXorHash::finalize_to_base64(Self) -> String
+pub fn QuickXorHash::finalize_to_byte_array(Self) -> Array[Byte]
+pub fn QuickXorHash::finalize_to_bytes(Self) -> Bytes
+pub fn QuickXorHash::update_from_byte_array(Self, Array[Byte]) -> Unit
+pub fn QuickXorHash::update_from_bytes(Self, Bytes) -> Unit
+pub fn QuickXorHash::update_from_bytes_view(Self, BytesView) -> Unit
+
+// Type aliases
+
+// Traits
+
