@@ -1,6 +1,0 @@
-{
-  "import": [
-    "gmlewis/base64",
-    "moonbitlang/core/buffer"
-  ]
-}

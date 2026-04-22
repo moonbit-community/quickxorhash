@@ -1,0 +1,8 @@
+import {
+  "baka-gourd/quickxorhash" @lib,
+  "moonbitlang/core/buffer",
+}
+
+options(
+  "is-main": true,
+)
