@@ -4,6 +4,7 @@
     {
       "path": "baka-gourd/quickxorhash",
       "alias": "lib"
-    }
+    },
+    "moonbitlang/core/buffer"
   ]
 }
