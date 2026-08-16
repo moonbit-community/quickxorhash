@@ -1,7 +1,7 @@
 ///|
 fn main {
   let hash = @lib.new()
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_bytes(b"")
   let test_data = buf.to_bytes()
   hash.update_from_bytes(test_data)
