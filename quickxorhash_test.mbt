@@ -211,10 +211,10 @@ test "split into 2 updates" {
   let data = Bytes::from_array(
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(x => x.to_byte()),
   )
-  let hash1 = new()
+  let hash1 = @quickxorhash.new()
   hash1.update_from_bytes(data)
   let result1 = hash1.finalize_to_byte_array()
-  let hash2 = new()
+  let hash2 = @quickxorhash.new()
   hash2.update_from_bytes_view(data[:5])
   hash2.update_from_bytes_view(data[5:])
   let result2 = hash2.finalize_to_byte_array()
@@ -224,10 +224,10 @@ test "split into 2 updates" {
 ///|
 test "update byte by byte" {
   let data = Bytes::from_array([1, 2, 3, 4, 5].map(x => x.to_byte()))
-  let hash1 = new()
+  let hash1 = @quickxorhash.new()
   hash1.update_from_bytes(data)
   let result1 = hash1.finalize_to_byte_array()
-  let hash2 = new()
+  let hash2 = @quickxorhash.new()
   let mut i = 0
   while i < data.length() {
     hash2.update_from_bytes_view(data[i:i + 1])
@@ -239,14 +239,14 @@ test "update byte by byte" {
 
 ///|
 test "split across block boundary" {
-  let block_size = BLOCK_SIZE
+  let block_size = @quickxorhash.BLOCK_SIZE
   let total_size = block_size + 100
   let data = Array::make(total_size, 0xABU.to_byte())
   let data_bytes = Bytes::from_array(data)
-  let hash1 = new()
+  let hash1 = @quickxorhash.new()
   hash1.update_from_bytes(data_bytes)
   let result1 = hash1.finalize_to_byte_array()
-  let hash2 = new()
+  let hash2 = @quickxorhash.new()
   hash2.update_from_bytes_view(data_bytes[:block_size - 50])
   hash2.update_from_bytes_view(data_bytes[block_size - 50:block_size + 50])
   hash2.update_from_bytes_view(data_bytes[block_size + 50:block_size + 100])
@@ -257,10 +257,10 @@ test "split across block boundary" {
 ///|
 test "empty updates" {
   let data = Bytes::from_array([1, 2, 3, 4, 5].map(x => x.to_byte()))
-  let hash1 = new()
+  let hash1 = @quickxorhash.new()
   hash1.update_from_bytes(data)
   let result1 = hash1.finalize_to_byte_array()
-  let hash2 = new()
+  let hash2 = @quickxorhash.new()
   hash2.update_from_bytes_view(data[0:2])
   hash2.update_from_bytes(Bytes::from_array([]))
   hash2.update_from_bytes_view(data[2:])
