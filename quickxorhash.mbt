@@ -3,7 +3,7 @@
 /// This constant defines the internal block size (in bytes) used by the
 /// QuickXorHash algorithm. It equals 20 * 11 * 8 and is used when folding
 /// input data into the 160-bit internal buffer.
-pub const BLOCK_SIZE : Int = 20 * 11 * 8
+pub const BLOCK_SIZE : Int32 = 20 * 11 * 8
 
 ///|
 /// In-memory state for a QuickXorHash computation.
@@ -24,7 +24,7 @@ pub struct QuickXorHash {
 /// `size` set to 0. Use `update` (or the typed variants) to feed data.
 pub fn new() -> QuickXorHash {
   let buf = Array::make(BLOCK_SIZE, 0U.to_byte())
-  QuickXorHash::{ buffer: buf, size: 0UL }
+  QuickXorHash::{ buffer: buf, size: 0UL, }
 }
 
 ///|
@@ -179,10 +179,10 @@ pub fn QuickXorHash::finalize_to_byte_array(self : QuickXorHash) -> Array[Byte] 
   let hash21 = Array::make(21, 0U.to_byte())
   let mut i = 0
   while i < BLOCK_SIZE {
-    let shift_bits : Int = i * 11 % 160
-    let shift_bytes : Int = shift_bits >> 3
-    let shift_low : Int = shift_bits & 7
-    let v : Int = self.buffer[i].to_int() << shift_low
+    let shift_bits : Int32 = i * 11 % 160
+    let shift_bytes : Int32 = shift_bits >> 3
+    let shift_low : Int32 = shift_bits & 7
+    let v : Int32 = self.buffer[i].to_int() << shift_low
     hash21[shift_bytes] = hash21[shift_bytes] ^ (v & 0xFF).to_byte()
     hash21[shift_bytes + 1] = hash21[shift_bytes + 1] ^
       ((v >> 8) & 0xFF).to_byte()
