@@ -1,6 +1,5 @@
 import {
   "baka-gourd/quickxorhash" @lib,
-  "moonbitlang/core/buffer",
 }
 
 pkgtype(kind: "executable")
