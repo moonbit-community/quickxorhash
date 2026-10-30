@@ -2,7 +2,7 @@
 package "baka-gourd/quickxorhash"
 
 // Values
-pub const BLOCK_SIZE : Int = 1760
+pub const BLOCK_SIZE : Int32 = 1760
 
 pub fn new() -> QuickXorHash
 
@@ -23,4 +23,3 @@ pub fn QuickXorHash::update_from_bytes_view(Self, BytesView) -> Unit
 // Type aliases
 
 // Traits
-
